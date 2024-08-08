@@ -303,7 +303,7 @@
             const [showSettings, setShowSettings] = useState(false);
             const [theme, setTheme] = useState(() => {
                 const savedTheme = localStorage.getItem('theme');
-                return savedTheme || 'light';
+                return savedTheme || 'dark';
             });
             const [progress, setProgress] = useState({});
             const [statusText, setStatusText] = useState({});

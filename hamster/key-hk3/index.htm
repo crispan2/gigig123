@@ -306,7 +306,7 @@ const App = () => {
     const [showSettings, setShowSettings] = useState(false);
     const [theme, setTheme] = useState(() => {
         const savedTheme = localStorage.getItem('theme');
-        return savedTheme || 'light';
+        return savedTheme || 'dark';
     });
     const [language, setLanguage] = useState(() => {
         const savedLanguage = localStorage.getItem('language');

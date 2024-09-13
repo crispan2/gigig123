@@ -3,102 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аутентификация</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Авторизация</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-
-        * {
-            box-sizing: border-box;
+        body, html {
+            height: 100%;
             margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #121212;
-            color: #ffffff;
-            overflow: hidden;
+            background-color: #f0f2f5;
         }
-
-        .container {
-            background-color: #1e1e1e;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            transform: translateY(50px);
-            opacity: 0;
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        h2 {
-            color: #bb86fc;
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .input-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            background-color: #2c2c2c;
-            border: none;
-            border-radius: 8px;
-            color: #ffffff;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #bb86fc;
-        }
-
-        button {
-            background-color: #bb86fc;
-            color: #121212;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            transform: scale(1);
-        }
-
-        button:hover {
-            background-color: #9965e5;
-            transform: scale(1.05);
-        }
-
-        button:disabled {
-            background-color: #4a4a4a;
-            cursor: not-allowed;
-            transform: scale(1);
-        }
-
         .background-animation {
             position: fixed;
             top: 0;
@@ -106,113 +21,121 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.5;
+            overflow: hidden;
         }
-
-        .background-animation span {
+        .background-animation div {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: #bb86fc;
+            background-color: rgba(0, 123, 255, 0.1);
             border-radius: 50%;
-            animation: move 8s infinite linear;
+            animation: float 15s infinite;
         }
-
-        @keyframes move {
-            0% {
-                transform: translateY(0) translateX(0);
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100vw);
-            }
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+            100% { transform: translate(0, 0); }
         }
-
-        .feedback {
-            margin-top: 20px;
-            font-size: 16px;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
         }
-
-        .feedback.show {
-            opacity: 1;
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
         }
-
-        .feedback.success {
-            color: #4CAF50;
+        .input-container {
+            margin-bottom: 1rem;
         }
-
-        .feedback.error {
-            color: #F44336;
+        input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
         }
-
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #bb86fc;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 10px auto;
+        .feedback {
             display: none;
+            margin-top: 1rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="background-animation">
-        <span style="left: 10%; top: 20%;"></span>
-        <span style="left: 30%; top: 40%;"></span>
-        <span style="left: 50%; top: 60%;"></span>
-        <span style="left: 70%; top: 80%;"></span>
-        <span style="left: 90%; top: 10%;"></span>
+        <div style="left: 10%; top: 20%; width: 50px; height: 50px;"></div>
+        <div style="left: 30%; top: 40%; width: 70px; height: 70px;"></div>
+        <div style="left: 50%; top: 60%; width: 60px; height: 60px;"></div>
+        <div style="left: 70%; top: 80%; width: 40px; height: 40px;"></div>
+        <div style="left: 90%; top: 10%; width: 80px; height: 80px;"></div>
     </div>
 
     <div class="container">
         <h2>Введите пароль для доступа</h2>
         <div class="input-container">
-            <input type="password" id="password" placeholder="Пароль" autocomplete="off">
+            <input type="password" id="password" placeholder="Введите пароль">
+            <button onclick="checkPassword()">Войти</button>
         </div>
-        <button id="submitButton" onclick="submitPassword()">Войти</button>
-        <div class="loader" id="loader"></div>
-        <div class="feedback" id="feedback"></div>
+        <div id="loader" class="loader"></div>
+        <div id="feedback" class="feedback"></div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            const loader = document.getElementById('loader');
+            const feedback = document.getElementById('feedback');
 
-        function submitPassword() {
-            let password = document.getElementById('password').value;
-            let feedbackElement = document.getElementById('feedback');
-            let submitButton = document.getElementById('submitButton');
-            let loader = document.getElementById('loader');
-
-            submitButton.disabled = true;
             loader.style.display = 'block';
-            feedbackElement.className = 'feedback show';
-            feedbackElement.textContent = 'Проверка пароля...';
+            feedback.style.display = 'none';
 
-            // Encode the password and append it to the current URL
-            let currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('password', encodeURIComponent(password));
-            
-            // Use Telegram WebApp to open the URL with the password
-            tg.openTelegramLink(currentUrl.toString());
+            // Симуляция проверки пароля (замените на реальную проверку)
+            setTimeout(() => {
+                loader.style.display = 'none';
+                if (password === 'Val123') { // Замените на реальную проверку пароля
+                    feedback.textContent = 'Авторизация успешна!';
+                    feedback.style.color = 'green';
+                    feedback.style.display = 'block';
+                    // Отправка пароля Telegram боту
+                    Telegram.WebApp.sendData(JSON.stringify({password: password}));
+                } else {
+                    feedback.textContent = 'Неверный пароль. Попробуйте еще раз.';
+                    feedback.style.color = 'red';
+                    feedback.style.display = 'block';
+                }
+            }, 1000); // Симулированная задержка
         }
-
-        // Add floating animation to background elements
-        const backgroundElements = document.querySelectorAll('.background-animation span');
-        backgroundElements.forEach(element => {
-            element.style.left = `${Math.random() * 100}%`;
-            element.style.top = `${Math.random() * 100}%`;
-            element.style.animationDelay = `${Math.random() * 5}s`;
-        });
     </script>
 </body>
 </html>

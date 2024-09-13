@@ -93,6 +93,12 @@
             transform: scale(1.05);
         }
 
+        button:disabled {
+            background-color: #4a4a4a;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
         .background-animation {
             position: fixed;
             top: 0;
@@ -120,6 +126,42 @@
                 transform: translateY(-100vh) translateX(100vw);
             }
         }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.success {
+            color: #4CAF50;
+        }
+
+        .feedback.error {
+            color: #F44336;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #bb86fc;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +178,9 @@
         <div class="input-container">
             <input type="password" id="password" placeholder="Пароль" autocomplete="off">
         </div>
-        <button onclick="submitPassword()">Войти</button>
+        <button id="submitButton" onclick="submitPassword()">Войти</button>
+        <div class="loader" id="loader"></div>
+        <div class="feedback" id="feedback"></div>
     </div>
 
     <script>
@@ -145,8 +189,31 @@
 
         function submitPassword() {
             let password = document.getElementById('password').value;
-            tg.sendData(password);
-            tg.close();
+            let feedbackElement = document.getElementById('feedback');
+            let submitButton = document.getElementById('submitButton');
+            let loader = document.getElementById('loader');
+
+            submitButton.disabled = true;
+            loader.style.display = 'block';
+            feedbackElement.className = 'feedback';
+            feedbackElement.textContent = '';
+
+            // Simulate API call to check password
+            setTimeout(() => {
+                if (password === "Val123") { // Replace with your actual password check
+                    feedbackElement.textContent = 'Авторизация успешна!';
+                    feedbackElement.className = 'feedback show success';
+                    setTimeout(() => {
+                        tg.sendData(password);
+                        tg.close();
+                    }, 1500);
+                } else {
+                    feedbackElement.textContent = 'Неверный пароль. Попробуйте еще раз.';
+                    feedbackElement.className = 'feedback show error';
+                    submitButton.disabled = false;
+                    loader.style.display = 'none';
+                }
+            }, 1000);
         }
 
         // Add floating animation to background elements

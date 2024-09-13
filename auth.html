@@ -195,25 +195,15 @@
 
             submitButton.disabled = true;
             loader.style.display = 'block';
-            feedbackElement.className = 'feedback';
-            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback show';
+            feedbackElement.textContent = 'Проверка пароля...';
 
-            // Simulate API call to check password
-            setTimeout(() => {
-                if (password === "Val123") { // Replace with your actual password check
-                    feedbackElement.textContent = 'Авторизация успешна!';
-                    feedbackElement.className = 'feedback show success';
-                    setTimeout(() => {
-                        tg.sendData(password);
-                        tg.close();
-                    }, 1500);
-                } else {
-                    feedbackElement.textContent = 'Неверный пароль. Попробуйте еще раз.';
-                    feedbackElement.className = 'feedback show error';
-                    submitButton.disabled = false;
-                    loader.style.display = 'none';
-                }
-            }, 1000);
+            // Encode the password and append it to the current URL
+            let currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('password', encodeURIComponent(password));
+            
+            // Use Telegram WebApp to open the URL with the password
+            tg.openTelegramLink(currentUrl.toString());
         }
 
         // Add floating animation to background elements

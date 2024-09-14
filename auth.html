@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация бота</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(26, 26, 46, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 350px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 28px;
+            color: #4ecca3;
+            text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(35, 53, 84, 0.5);
+            border: 2px solid #4ecca3;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(78, 204, 163, 0.5);
+        }
+        label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #93a5c0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        input:focus + label,
+        input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            background-color: #1a1a2e;
+            padding: 0 5px;
+            color: #4ecca3;
+        }
+        button {
+            background-color: #4ecca3;
+            color: #16213e;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover {
+            background-color: #45b393;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, .5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 1;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        button:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .success {
+            background-color: rgba(78, 204, 163, 0.2);
+            color: #4ecca3;
+            border: 1px solid #4ecca3;
+        }
+        .error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Авторизация бота</h1>
+        <form id="auth-form">
+            <div class="input-group">
+                <input type="text" id="bot-token" placeholder=" " required>
+                <label for="bot-token">Токен бота</label>
+            </div>
+            <button type="submit" id="submit-btn">Отправить</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('auth-form');
+        const input = document.getElementById('bot-token');
+        const submitBtn = document.getElementById('submit-btn');
+        const message = document.getElementById('message');
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.opacity = '1';
+            }, 10);
+        }
+
+        function hideMessage() {
+            message.style.opacity = '0';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 300);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = input.value.trim();
+            
+            if (token === '') {
+                showMessage('Пожалуйста, введите токен бота.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            hideMessage();
+
+            // Имитация отправки запроса
+            setTimeout(() => {
+                if (token.length > 5) {
+                    showMessage('Авторизация успешна!', 'success');
+                } else {
+                    showMessage('Ошибка авторизации. Проверьте токен.', 'error');
+                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить';
+            }, 1500);
+        });
+
+        // Эффект нажатия кнопки
+        submitBtn.addEventListener('click', function(e) {
+            let rect = this.getBoundingClientRect();
+            let ripple = this.querySelector('.ripple');
+            if (!ripple) {
+                ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.height = ripple.style.width = Math.max(rect.width, rect.height) + 'px';
+                this.appendChild(ripple);
+            }
+            ripple.classList.remove('show');
+            let top = e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop;
+            let left = e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft;
+            ripple.style.top = top + 'px';
+            ripple.style.left = left + 'px';
+            ripple.classList.add('show');
+            return false;
+        });
+    </script>
+</body>
+</html>

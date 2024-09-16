@@ -1,172 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация бота</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            padding: 20px;
-        }
-
-        .container {
-            background-color: #2c2c2c;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 350px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #0088cc;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 300;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            background-color: #3a3a3a;
-            border: 1px solid #4a4a4a;
-            border-radius: 6px;
-            color: #ffffff;
-            font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #0088cc;
-            box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.2);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 700;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-        }
-
-        button:hover {
-            background-color: #0077b3;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .message {
-            margin-top: 20px;
-            text-align: center;
-            font-weight: 300;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .message.show {
-            opacity: 1;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .container {
-            animation: fadeIn 0.5s ease-out;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <h2>Авторизация бота</h2>
         <div class="input-group">
-            <label for="password">Пароль бота</label>
-            <input type="password" id="password" required>
+            <input type="password" id="password" placeholder="Пароль бота">
         </div>
         <button onclick="sendPassword()">Отправить</button>
         <div id="message" class="message"></div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-
         function sendPassword() {
-            let password = document.getElementById('password').value;
-            let messageElement = document.getElementById('message');
-
-            if (password.trim() !== "") {
-                // Send data back to the bot for verification
-                tg.sendData(JSON.stringify({
-                    action: "auth",
-                    password: password
-                }));
-                
-                showMessage("Пароль отправлен на проверку...", "#0088cc");
-                
-                // Close the WebApp after a short delay
-                setTimeout(() => tg.close(), 1500);
-            } else {
-                showMessage("Пожалуйста, введите пароль.", "#ff4444");
-            }
+            var password = document.getElementById('password').value;
+            var data = {
+                action: 'auth',
+                password: password
+            };
+            
+            // Send data back to the bot
+            window.Telegram.WebApp.sendData(JSON.stringify(data));
+            
+            // Close the WebApp
+            window.Telegram.WebApp.close();
         }
-
-        function showMessage(text, color) {
-            let messageElement = document.getElementById('message');
-            messageElement.textContent = text;
-            messageElement.style.color = color;
-            messageElement.classList.add('show');
-        }
-
-        // Initialize Telegram WebApp
-        tg.expand();
-
-        // Add event listener for Enter key
-        document.getElementById('password').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                sendPassword();
-            }
-        });
     </script>
 </body>
 </html>

@@ -4,224 +4,168 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Авторизация бота</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e0e0e0;
+            font-family: 'Roboto', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
         }
+
         .container {
-            background-color: rgba(26, 26, 46, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            width: 350px;
+            background-color: #2c2c2c;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 350px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
             text-align: center;
+            margin-bottom: 25px;
+            color: #0088cc;
         }
-        h1 {
-            margin-bottom: 30px;
-            font-size: 28px;
-            color: #4ecca3;
-            text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
-        }
+
         .input-group {
-            position: relative;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 300;
+        }
+
         input {
             width: 100%;
-            padding: 15px;
-            background-color: rgba(35, 53, 84, 0.5);
-            border: 2px solid #4ecca3;
-            border-radius: 10px;
-            color: #e0e0e0;
+            padding: 12px;
+            background-color: #3a3a3a;
+            border: 1px solid #4a4a4a;
+            border-radius: 6px;
+            color: #ffffff;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         input:focus {
             outline: none;
-            box-shadow: 0 0 15px rgba(78, 204, 163, 0.5);
+            border-color: #0088cc;
+            box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.2);
         }
-        label {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #93a5c0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-        input:focus + label,
-        input:not(:placeholder-shown) + label {
-            top: -10px;
-            left: 10px;
-            font-size: 12px;
-            background-color: #1a1a2e;
-            padding: 0 5px;
-            color: #4ecca3;
-        }
+
         button {
-            background-color: #4ecca3;
-            color: #16213e;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             width: 100%;
-            position: relative;
-            overflow: hidden;
+            padding: 12px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
+
         button:hover {
-            background-color: #45b393;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.4);
+            background-color: #0077b3;
         }
+
         button:active {
-            transform: translateY(0);
-            box-shadow: none;
+            transform: scale(0.98);
         }
-        button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, .5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 1;
-            }
-            20% {
-                transform: scale(25, 25);
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: scale(40, 40);
-            }
-        }
-        button:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
+
         .message {
             margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            display: none;
+            text-align: center;
+            font-weight: 300;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .success {
-            background-color: rgba(78, 204, 163, 0.2);
-            color: #4ecca3;
-            border: 1px solid #4ecca3;
+
+        .message.show {
+            opacity: 1;
         }
-        .error {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-            border: 1px solid #e74c3c;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Авторизация бота</h1>
-        <form id="auth-form">
-            <div class="input-group">
-                <input type="text" id="bot-token" placeholder=" " required>
-                <label for="bot-token">Токен бота</label>
-            </div>
-            <button type="submit" id="submit-btn">Отправить</button>
-        </form>
+        <h2>Авторизация бота</h2>
+        <div class="input-group">
+            <label for="password">Пароль бота</label>
+            <input type="password" id="password" required>
+        </div>
+        <button onclick="sendPassword()">Отправить</button>
         <div id="message" class="message"></div>
     </div>
 
     <script>
-        const form = document.getElementById('auth-form');
-        const input = document.getElementById('bot-token');
-        const submitBtn = document.getElementById('submit-btn');
-        const message = document.getElementById('message');
+        let tg = window.Telegram.WebApp;
 
-        function showMessage(text, type) {
-            message.textContent = text;
-            message.className = `message ${type}`;
-            message.style.display = 'block';
-            setTimeout(() => {
-                message.style.opacity = '1';
-            }, 10);
+        function sendPassword() {
+            let password = document.getElementById('password').value;
+            let messageElement = document.getElementById('message');
+
+            if (password.trim() !== "") {
+                // Send data back to the bot for verification
+                tg.sendData(JSON.stringify({
+                    action: "auth",
+                    password: password
+                }));
+                
+                showMessage("Пароль отправлен на проверку...", "#0088cc");
+                
+                // Close the WebApp after a short delay
+                setTimeout(() => tg.close(), 1500);
+            } else {
+                showMessage("Пожалуйста, введите пароль.", "#ff4444");
+            }
         }
 
-        function hideMessage() {
-            message.style.opacity = '0';
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 300);
+        function showMessage(text, color) {
+            let messageElement = document.getElementById('message');
+            messageElement.textContent = text;
+            messageElement.style.color = color;
+            messageElement.classList.add('show');
         }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const token = input.value.trim();
-            
-            if (token === '') {
-                showMessage('Пожалуйста, введите токен бота.', 'error');
-                return;
+        // Initialize Telegram WebApp
+        tg.expand();
+
+        // Add event listener for Enter key
+        document.getElementById('password').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendPassword();
             }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправка...';
-            hideMessage();
-
-            // Имитация отправки запроса
-            setTimeout(() => {
-                if (token.length > 5) {
-                    showMessage('Авторизация успешна!', 'success');
-                } else {
-                    showMessage('Ошибка авторизации. Проверьте токен.', 'error');
-                }
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Отправить';
-            }, 1500);
-        });
-
-        // Эффект нажатия кнопки
-        submitBtn.addEventListener('click', function(e) {
-            let rect = this.getBoundingClientRect();
-            let ripple = this.querySelector('.ripple');
-            if (!ripple) {
-                ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                ripple.style.height = ripple.style.width = Math.max(rect.width, rect.height) + 'px';
-                this.appendChild(ripple);
-            }
-            ripple.classList.remove('show');
-            let top = e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop;
-            let left = e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft;
-            ripple.style.top = top + 'px';
-            ripple.style.left = left + 'px';
-            ripple.classList.add('show');
-            return false;
         });
     </script>
 </body>

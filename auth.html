@@ -25,8 +25,11 @@
             // Send data back to the bot
             window.Telegram.WebApp.sendData(JSON.stringify(data));
             
-            // Close the WebApp
-            window.Telegram.WebApp.close();
+            // Show a message to the user
+            document.getElementById('message').innerText = 'Пароль отправлен. Пожалуйста, вернитесь в чат с ботом.';
+            
+            // Close the WebApp after a short delay
+            setTimeout(() => window.Telegram.WebApp.close(), 2000);
         }
     </script>
 </body>
